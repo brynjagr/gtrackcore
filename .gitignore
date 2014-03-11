@@ -34,3 +34,7 @@ pip-log.txt
 
 #Track5 specific
 test_output
+
+#Intellij
+.idea
+gtrackcore.iml
