@@ -46,3 +46,6 @@ gtrackcore/core/*.wig
 
 #profiling
 *.prof
+
+#OS X
+*.DS_Store
