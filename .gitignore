@@ -38,3 +38,11 @@ test_output
 #Intellij
 .idea
 gtrackcore.iml
+
+#test tracks
+gtrackcore/core/*.bed
+gtrackcore/core/*.gtrack
+gtrackcore/core/*.wig
+
+#profiling
+*.prof
