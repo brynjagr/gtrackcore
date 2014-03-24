@@ -19,25 +19,29 @@ class Config(object):
     _INITIALIZED = False
     
     @classmethod
-    def initialize(cls, configFileName='~/gtrackcore_config', dataDir='~/gtrackcore_data'):
+    def initialize(cls, configFileName=None, dataDir=None):
         cls._INITIALIZED = True
-        
+
+        gtrackcore_dir = os.environ.get('GTRACKCORE_DIR')
+
+        if not gtrackcore_dir:
+            if os.environ.get('HOME') is not None:
+                print 'GTRACKCORE_DIR env should be defined. Using %s as data directory' % os.environ.get('HOME')
+                gtrackcore_dir = os.environ.get('HOME')
+            else:
+                raise AttributeError('Neither env GTRACKCORE_DIR nor HOME is set')
+
+        data_dir = os.sep.join([gtrackcore_dir, 'gtrackcore_data'])
+        config_filename = os.sep.join([gtrackcore_dir, 'gtrackcore_config'])
+
         try:
-            if configFileName:
-                configFileName = os.path.expanduser(configFileName)
-            
-            if not dataDir:
-                raise ArgumentValueError('Data directory must be specified')
-            
-            dataDir = os.path.expanduser(dataDir)
-                
             configDef = OrderedDict()
             
             configDef['General'] = OrderedDict( \
-                [('LOG_PATH', os.path.expanduser('~/gtrackcore_logs')), \
-                 ('ORIG_DATA_PATH', os.sep.join([dataDir, 'Original'])), \
-                 ('PROCESSED_DATA_PATH', os.sep.join([dataDir, 'Processed'])), \
-                 ('METADATA_FILES_PATH', os.sep.join([dataDir, 'Metadata'])), \
+                [('LOG_PATH', os.sep.join([gtrackcore_dir, 'gtrackcore_logs'])), \
+                 ('ORIG_DATA_PATH', os.sep.join([data_dir, 'Original'])), \
+                 ('PROCESSED_DATA_PATH', os.sep.join([data_dir, 'Processed'])), \
+                 ('METADATA_FILES_PATH', os.sep.join([data_dir, 'Metadata'])), \
                  ('MAX_CONCAT_LEN_FOR_OVERLAPPING_ELS', '20'), \
                  ('OUTPUT_PRECISION', '4'), \
                  ('USE_SLOW_DEFENSIVE_ASSERTS', 'False')])
@@ -51,10 +55,10 @@ class Config(object):
             
             cls._initConfig(configDef)
 
-            if configFileName:
-                if os.path.exists(configFileName):
-                    cls._readConfig(configFileName, configDef)            
-                cls._writeConfig(configFileName, configDef)
+            if config_filename:
+                if os.path.exists(config_filename):
+                    cls._readConfig(config_filename, configDef)
+                cls._writeConfig(config_filename, configDef)
         
         except:
             cls._INITIALIZED = False
